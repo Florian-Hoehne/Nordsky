@@ -27,6 +27,9 @@
     "lavender": "#B3A5F5",
     "comment": "#5E86AE",
     "doc": "#5FA595",
+    "red": "#F0616D",
+    "rose": "#F5A3AA",
+    "grey": "#71869B",
     "error": "#FF5C6C",
     "warning": "#F5A742",
     "accent": "#1668C7",
@@ -37,7 +40,21 @@
     "conflictBg": "#4A3414",
     "searchBg": "#5A4410",
     "usageBg": "#103E5C",
-    "writeBg": "#3D2A55"
+    "writeBg": "#3D2A55",
+    "kw": "#4DA3FF",
+    "str": "#7EDC8A",
+    "plain": "#B5EBC0",
+    "key": "#F5A742",
+    "const": "#F5A742",
+    "esc": "#F5A742",
+    "num": "#FF7B8A",
+    "type": "#4FD6BE",
+    "tag": "#9FE8D5",
+    "fn": "#FFD98A",
+    "field": "#9CCBFF",
+    "meta": "#B3A5F5",
+    "op": "#9CCBFF",
+    "link": "#4FD6BE"
   },
   "ui": {
     "*": {

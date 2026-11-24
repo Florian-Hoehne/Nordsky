@@ -3,11 +3,11 @@
 
     python3 scripts/generate.py
 
-Outputs
-    jetbrains/src/main/resources/themes/Nordsky.xml          editor colour scheme
-    jetbrains/src/main/resources/themes/Nordsky.theme.json   IDE UI theme
-    vscode/themes/nordsky-color-theme.json          VS Code theme
-    docs/preview.html                               palette + syntax preview
+Outputs, per theme in THEMES
+    jetbrains/src/main/resources/themes/<Stem>.xml          editor colour scheme
+    jetbrains/src/main/resources/themes/<Stem>.theme.json   IDE UI theme
+    vscode/themes/<slug>-color-theme.json                   VS Code theme
+    docs/preview-<slug>.html                                palette + syntax preview
 
 The installable packages are built with the official toolchains afterwards, see README.md.
 """
@@ -45,6 +45,9 @@ P = {
     "lavender": "#B3A5F5",  # annotations, metadata
     "comment": "#5E86AE",
     "doc": "#5FA595",
+    "red": "#F0616D",
+    "rose": "#F5A3AA",
+    "grey": "#71869B",
     # signals
     "error": "#FF5C6C",
     "warning": "#F5A742",
@@ -58,6 +61,40 @@ P = {
     "searchBg": "#5A4410",
     "usageBg": "#103E5C",
     "writeBg": "#3D2A55",
+}
+
+
+# Syntax roles point at palette colours, so a theme can assign them differently.
+ROLES = {
+    "kw": "blue", "str": "green", "plain": "mint", "key": "orange", "const": "orange",
+    "esc": "orange", "num": "coral", "type": "teal", "tag": "aqua", "fn": "yellow",
+    "field": "sky", "meta": "lavender", "op": "sky", "link": "teal",
+}
+
+# Second theme: the look of the terminal the palette was taken from. Red strings, green
+# numbers, grey annotations, plain white constants and near-white comments.
+CONSOLE = {
+    **P,
+    "bg0": "#021221", "bg1": "#03182B", "bg2": "#0A2238", "bg3": "#0F3152", "sel": "#12406E",
+    "border": "#0B2740", "fg": "#E8EEF4", "muted": "#7C90A5", "faint": "#3D5268",
+    "linenum": "#3D5F85", "blue": "#4A96EA", "sky": "#6DB5F7", "teal": "#3EC9A7",
+    "green": "#56D06C", "comment": "#A9B8C7", "doc": "#58B878",
+}
+CONSOLE_ROLES = {
+    "kw": "blue", "str": "red", "plain": "rose", "key": "sky", "const": "fg", "esc": "orange",
+    "num": "green", "type": "teal", "tag": "teal", "fn": "sky", "field": "fg", "meta": "grey",
+    "op": "fg", "link": "green",
+}
+
+
+def resolve(palette, roles):
+    return {**palette, **{role: palette[color] for role, color in roles.items()}}
+
+
+# theme name -> (file stem, palette with roles resolved)
+THEMES = {
+    "Nordsky": ("Nordsky", resolve(P, ROLES)),
+    "Nordsky Console": ("NordskyConsole", resolve(CONSOLE, CONSOLE_ROLES)),
 }
 
 
@@ -78,9 +115,9 @@ def contrast(a, b):
 
 
 # Every text colour must stay readable on the editor background (WCAG AA).
-for _name in ("fg", "muted", "blue", "sky", "orange", "green", "mint", "teal", "aqua", "yellow",
-              "coral", "lavender", "comment", "doc", "error"):
-    assert contrast(_name, "bg1") >= 4.5, (_name, round(contrast(_name, "bg1"), 2))
+for _theme, (_stem, P) in THEMES.items():
+    for _name in ("fg", "muted", "comment", "doc", "error", *ROLES):
+        assert contrast(_name, "bg1") >= 4.5, (_theme, _name, round(contrast(_name, "bg1"), 2))
 
 # --------------------------------------------------------------------------- JetBrains editor scheme
 EDITOR_COLORS = {
@@ -142,50 +179,50 @@ ATTRS = {
     # --- language defaults: every language plugin inherits from these
     "TEXT": "fg=fg bg=bg1",
     "DEFAULT_IDENTIFIER": "fg=fg",
-    "DEFAULT_KEYWORD": "fg=blue",
-    "DEFAULT_STRING": "fg=green",
-    "DEFAULT_VALID_STRING_ESCAPE": "fg=orange",
+    "DEFAULT_KEYWORD": "fg=kw",
+    "DEFAULT_STRING": "fg=str",
+    "DEFAULT_VALID_STRING_ESCAPE": "fg=esc",
     "DEFAULT_INVALID_STRING_ESCAPE": "fg=error fx=wave:error",
-    "DEFAULT_NUMBER": "fg=coral",
+    "DEFAULT_NUMBER": "fg=num",
     "DEFAULT_LINE_COMMENT": "fg=comment i",
     "DEFAULT_BLOCK_COMMENT": "fg=comment i",
     "DEFAULT_DOC_COMMENT": "fg=doc i",
-    "DEFAULT_DOC_COMMENT_TAG": "fg=teal b",
-    "DEFAULT_DOC_COMMENT_TAG_VALUE": "fg=sky",
-    "DEFAULT_DOC_MARKUP": "fg=aqua",
-    "DEFAULT_CLASS_NAME": "fg=teal",
-    "DEFAULT_CLASS_REFERENCE": "fg=teal",
-    "DEFAULT_INTERFACE_NAME": "fg=teal i",
-    "DEFAULT_FUNCTION_DECLARATION": "fg=yellow",
+    "DEFAULT_DOC_COMMENT_TAG": "fg=type b",
+    "DEFAULT_DOC_COMMENT_TAG_VALUE": "fg=field",
+    "DEFAULT_DOC_MARKUP": "fg=tag",
+    "DEFAULT_CLASS_NAME": "fg=type",
+    "DEFAULT_CLASS_REFERENCE": "fg=type",
+    "DEFAULT_INTERFACE_NAME": "fg=type i",
+    "DEFAULT_FUNCTION_DECLARATION": "fg=fn",
     "DEFAULT_FUNCTION_CALL": "fg=fg",
     "DEFAULT_STATIC_METHOD": "fg=fg i",
-    "DEFAULT_INSTANCE_FIELD": "fg=sky",
-    "DEFAULT_STATIC_FIELD": "fg=sky i",
-    "DEFAULT_CONSTANT": "fg=orange",
-    "DEFAULT_GLOBAL_VARIABLE": "fg=sky i",
+    "DEFAULT_INSTANCE_FIELD": "fg=field",
+    "DEFAULT_STATIC_FIELD": "fg=field i",
+    "DEFAULT_CONSTANT": "fg=const",
+    "DEFAULT_GLOBAL_VARIABLE": "fg=field i",
     "DEFAULT_LOCAL_VARIABLE": "fg=fg",
     "DEFAULT_PARAMETER": "fg=fg",
     "DEFAULT_REASSIGNED_LOCAL_VARIABLE": "fg=fg fx=dotted:muted",
     "DEFAULT_REASSIGNED_PARAMETER": "fg=fg fx=dotted:muted",
-    "DEFAULT_METADATA": "fg=lavender",
-    "DEFAULT_LABEL": "fg=lavender",
-    "DEFAULT_PREDEFINED_SYMBOL": "fg=orange",
-    "DEFAULT_OPERATION_SIGN": "fg=sky",
+    "DEFAULT_METADATA": "fg=meta",
+    "DEFAULT_LABEL": "fg=meta",
+    "DEFAULT_PREDEFINED_SYMBOL": "fg=const",
+    "DEFAULT_OPERATION_SIGN": "fg=op",
     "DEFAULT_BRACES": "fg=fg",
     "DEFAULT_BRACKETS": "fg=fg",
     "DEFAULT_PARENTHS": "fg=fg",
     "DEFAULT_DOT": "fg=fg",
     "DEFAULT_COMMA": "fg=muted",
     "DEFAULT_SEMICOLON": "fg=muted",
-    "DEFAULT_TAG": "fg=aqua",
-    "DEFAULT_ATTRIBUTE": "fg=sky",
-    "DEFAULT_ENTITY": "fg=orange",
+    "DEFAULT_TAG": "fg=tag",
+    "DEFAULT_ATTRIBUTE": "fg=field",
+    "DEFAULT_ENTITY": "fg=key",
     "DEFAULT_TEMPLATE_LANGUAGE_COLOR": "bg=bg0",
-    "DEFAULT_HIGHLIGHTED_REFERENCE": "fg=teal",
+    "DEFAULT_HIGHLIGHTED_REFERENCE": "fg=type",
     # --- editor chrome
-    "HYPERLINK_ATTRIBUTES": "fg=teal fx=line:teal",
+    "HYPERLINK_ATTRIBUTES": "fg=link fx=line:link",
     "FOLLOWED_HYPERLINK_ATTRIBUTES": "fg=lavender fx=line:lavender",
-    "CTRL_CLICKABLE": "fg=teal fx=line:teal",
+    "CTRL_CLICKABLE": "fg=link fx=line:link",
     "SEARCH_RESULT_ATTRIBUTES": "bg=searchBg stripe=orange",
     "WRITE_SEARCH_RESULT_ATTRIBUTES": "bg=writeBg stripe=lavender",
     "TEXT_SEARCH_RESULT_ATTRIBUTES": "bg=searchBg stripe=orange",
@@ -257,83 +294,83 @@ ATTRS = {
     "LOG_DEBUG_OUTPUT": "fg=muted",
     "LOG_VERBOSE_OUTPUT": "fg=faint",
     # --- Java / Kotlin
-    "ANNOTATION_NAME_ATTRIBUTES": "fg=lavender",
-    "ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES": "fg=sky",
-    "STATIC_FINAL_FIELD_ATTRIBUTES": "fg=orange",
-    "TYPE_PARAMETER_NAME_ATTRIBUTES": "fg=aqua",
-    "ABSTRACT_CLASS_NAME_ATTRIBUTES": "fg=teal i",
-    "ENUM_NAME_ATTRIBUTES": "fg=teal",
-    "CONSTRUCTOR_CALL_ATTRIBUTES": "fg=teal",
-    "IMPLICIT_ANONYMOUS_CLASS_PARAMETER_ATTRIBUTES": "fg=sky fx=line:sky",
-    "KOTLIN_NAMED_ARGUMENT": "fg=sky",
-    "KOTLIN_LABEL": "fg=lavender",
+    "ANNOTATION_NAME_ATTRIBUTES": "fg=meta",
+    "ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES": "fg=field",
+    "STATIC_FINAL_FIELD_ATTRIBUTES": "fg=const",
+    "TYPE_PARAMETER_NAME_ATTRIBUTES": "fg=tag",
+    "ABSTRACT_CLASS_NAME_ATTRIBUTES": "fg=type i",
+    "ENUM_NAME_ATTRIBUTES": "fg=type",
+    "CONSTRUCTOR_CALL_ATTRIBUTES": "fg=type",
+    "IMPLICIT_ANONYMOUS_CLASS_PARAMETER_ATTRIBUTES": "fg=field fx=line:sky",
+    "KOTLIN_NAMED_ARGUMENT": "fg=field",
+    "KOTLIN_LABEL": "fg=meta",
     "KOTLIN_MUTABLE_VARIABLE": "fg=fg fx=dotted:muted",
     # --- XML / HTML
     "XML_TAG": "fg=muted",
-    "XML_TAG_NAME": "fg=aqua",
-    "XML_ATTRIBUTE_NAME": "fg=sky",
-    "XML_ATTRIBUTE_VALUE": "fg=green",
-    "XML_NS_PREFIX": "fg=lavender",
+    "XML_TAG_NAME": "fg=tag",
+    "XML_ATTRIBUTE_NAME": "fg=field",
+    "XML_ATTRIBUTE_VALUE": "fg=str",
+    "XML_NS_PREFIX": "fg=meta",
     "XML_PROLOGUE": "fg=muted",
-    "XML_ENTITY_REFERENCE": "fg=orange",
+    "XML_ENTITY_REFERENCE": "fg=key",
     "XML_TAG_DATA": "fg=fg",
     "HTML_TAG": "fg=muted",
-    "HTML_TAG_NAME": "fg=aqua",
-    "HTML_ATTRIBUTE_NAME": "fg=sky",
-    "HTML_ATTRIBUTE_VALUE": "fg=green",
-    "HTML_ENTITY_REFERENCE": "fg=orange",
+    "HTML_TAG_NAME": "fg=tag",
+    "HTML_ATTRIBUTE_NAME": "fg=field",
+    "HTML_ATTRIBUTE_VALUE": "fg=str",
+    "HTML_ENTITY_REFERENCE": "fg=key",
     # --- YAML / JSON / properties: keys orange, values never plain white
-    "YAML_SCALAR_KEY": "fg=orange b",
-    "YAML_SCALAR_VALUE": "fg=mint",
-    "YAML_SCALAR_STRING": "fg=green",
-    "YAML_SCALAR_DSTRING": "fg=green",
-    "YAML_SCALAR_LIST": "fg=mint",
-    "YAML_TEXT": "fg=mint",
-    "YAML_ANCHOR": "fg=lavender",
-    "YAML_SIGN": "fg=sky",
-    "JSON.PROPERTY_KEY": "fg=orange",
-    "JSON.KEYWORD": "fg=blue",
-    "PROPERTIES.KEY": "fg=orange",
-    "PROPERTIES.VALUE": "fg=green",
-    "PROPERTIES.KEY_VALUE_SEPARATOR": "fg=sky",
+    "YAML_SCALAR_KEY": "fg=key b",
+    "YAML_SCALAR_VALUE": "fg=plain",
+    "YAML_SCALAR_STRING": "fg=str",
+    "YAML_SCALAR_DSTRING": "fg=str",
+    "YAML_SCALAR_LIST": "fg=plain",
+    "YAML_TEXT": "fg=plain",
+    "YAML_ANCHOR": "fg=meta",
+    "YAML_SIGN": "fg=field",
+    "JSON.PROPERTY_KEY": "fg=key",
+    "JSON.KEYWORD": "fg=kw",
+    "PROPERTIES.KEY": "fg=key",
+    "PROPERTIES.VALUE": "fg=str",
+    "PROPERTIES.KEY_VALUE_SEPARATOR": "fg=field",
     # --- shell
     "BASH.SHEBANG": "fg=comment i",
-    "BASH.VAR_USE": "fg=sky",
-    "BASH.VAR_DEF": "fg=sky",
-    "BASH.HERE_DOC": "fg=green",
-    "BASH.HERE_DOC_START": "fg=orange",
-    "BASH.HERE_DOC_END": "fg=orange",
-    "BASH.EXTERNAL_COMMAND": "fg=yellow",
-    "BASH.INTERNAL_COMMAND": "fg=blue",
-    "BASH.FUNCTION_DECLARATION": "fg=yellow",
-    "BASH.BACKQUOTE": "fg=orange",
-    "BASH.REDIRECTION": "fg=sky",
+    "BASH.VAR_USE": "fg=field",
+    "BASH.VAR_DEF": "fg=field",
+    "BASH.HERE_DOC": "fg=str",
+    "BASH.HERE_DOC_START": "fg=key",
+    "BASH.HERE_DOC_END": "fg=key",
+    "BASH.EXTERNAL_COMMAND": "fg=fn",
+    "BASH.INTERNAL_COMMAND": "fg=kw",
+    "BASH.FUNCTION_DECLARATION": "fg=fn",
+    "BASH.BACKQUOTE": "fg=key",
+    "BASH.REDIRECTION": "fg=field",
     # --- Markdown
-    "MARKDOWN_HEADER_LEVEL_1": "fg=blue b",
-    "MARKDOWN_HEADER_LEVEL_2": "fg=blue b",
-    "MARKDOWN_HEADER_LEVEL_3": "fg=sky b",
-    "MARKDOWN_HEADER_LEVEL_4": "fg=sky b",
-    "MARKDOWN_HEADER_LEVEL_5": "fg=sky",
-    "MARKDOWN_HEADER_LEVEL_6": "fg=sky",
-    "MARKDOWN_BOLD": "fg=orange b",
-    "MARKDOWN_ITALIC": "fg=yellow i",
-    "MARKDOWN_CODE_SPAN": "fg=green",
-    "MARKDOWN_CODE_FENCE": "fg=green",
-    "MARKDOWN_CODE_BLOCK": "fg=green",
+    "MARKDOWN_HEADER_LEVEL_1": "fg=kw b",
+    "MARKDOWN_HEADER_LEVEL_2": "fg=kw b",
+    "MARKDOWN_HEADER_LEVEL_3": "fg=field b",
+    "MARKDOWN_HEADER_LEVEL_4": "fg=field b",
+    "MARKDOWN_HEADER_LEVEL_5": "fg=field",
+    "MARKDOWN_HEADER_LEVEL_6": "fg=field",
+    "MARKDOWN_BOLD": "fg=key b",
+    "MARKDOWN_ITALIC": "fg=fn i",
+    "MARKDOWN_CODE_SPAN": "fg=str",
+    "MARKDOWN_CODE_FENCE": "fg=str",
+    "MARKDOWN_CODE_BLOCK": "fg=str",
     "MARKDOWN_BLOCK_QUOTE": "fg=comment i",
-    "MARKDOWN_LINK_TEXT": "fg=teal",
+    "MARKDOWN_LINK_TEXT": "fg=type",
     "MARKDOWN_LINK_DESTINATION": "fg=muted fx=line:muted",
-    "MARKDOWN_LIST_ITEM": "fg=orange",
+    "MARKDOWN_LIST_ITEM": "fg=key",
     # --- SQL and regular expressions
-    "SQL_KEYWORD": "fg=blue",
-    "SQL_STRING": "fg=green",
-    "SQL_TABLE": "fg=teal",
-    "SQL_COLUMN": "fg=sky",
-    "SQL_PROCEDURE": "fg=yellow",
-    "REGEXP.META": "fg=orange",
-    "REGEXP.CHAR_CLASS": "fg=teal",
-    "REGEXP.QUANTIFIER": "fg=coral",
-    "REGEXP.ESC_CHARACTER": "fg=orange",
+    "SQL_KEYWORD": "fg=kw",
+    "SQL_STRING": "fg=str",
+    "SQL_TABLE": "fg=type",
+    "SQL_COLUMN": "fg=field",
+    "SQL_PROCEDURE": "fg=fn",
+    "REGEXP.META": "fg=key",
+    "REGEXP.CHAR_CLASS": "fg=type",
+    "REGEXP.QUANTIFIER": "fg=num",
+    "REGEXP.ESC_CHARACTER": "fg=key",
     "INJECTED_LANGUAGE_FRAGMENT": "bg=021F38",
 }
 
@@ -366,21 +403,21 @@ def attr_xml(name, spec):
     return f'    <option name="{escape(name)}">\n      <value>{body}\n      </value>\n    </option>'
 
 
-def editor_scheme():
+def editor_scheme(name):
     colors = "\n".join(f'    <option name="{k}" value="{hx(v)}"/>' for k, v in EDITOR_COLORS.items())
     attrs = "\n".join(attr_xml(k, v) for k, v in ATTRS.items())
-    return (f'<scheme name="Nordsky" version="142" parent_scheme="Darcula">\n'
+    return (f'<scheme name="{name}" version="142" parent_scheme="Darcula">\n'
             f'  <colors>\n{colors}\n  </colors>\n  <attributes>\n{attrs}\n  </attributes>\n</scheme>\n')
 
 
 # --------------------------------------------------------------------------- JetBrains UI theme
-def ui_theme():
+def ui_theme(name, stem):
     return {
-        "name": "Nordsky",
+        "name": name,
         "dark": True,
         "author": "Nordsky",
         "parentTheme": "ExperimentalDark",
-        "editorScheme": "/themes/Nordsky.xml",
+        "editorScheme": f"/themes/{stem}.xml",
         "colors": {k: v for k, v in P.items()},
         "ui": {
             "*": {
@@ -631,7 +668,7 @@ def ui_theme():
 
 
 # --------------------------------------------------------------------------- VS Code
-def vscode_theme():
+def vscode_theme(name):
     def tok(name, scopes, color, style=None):
         settings = {"foreground": P[color]}
         if style is not None:
@@ -640,7 +677,7 @@ def vscode_theme():
 
     a = lambda color, alpha: P[color] + alpha  # noqa: E731
     return {
-        "name": "Nordsky",
+        "name": name,
         "type": "dark",
         "semanticHighlighting": True,
         "colors": {
@@ -741,58 +778,58 @@ def vscode_theme():
             tok("Doc comments", ["comment.block.documentation", "comment.block.javadoc",
                                  "string.quoted.docstring"], "doc", "italic"),
             tok("Doc tags", ["keyword.other.documentation", "storage.type.class.jsdoc",
-                             "entity.name.tag.javadoc"], "teal", "bold"),
+                             "entity.name.tag.javadoc"], "type", "bold"),
             tok("Keywords", ["keyword", "storage", "storage.type", "storage.modifier",
-                             "keyword.control", "variable.language", "constant.language"], "blue", ""),
-            tok("Operators", ["keyword.operator", "punctuation.accessor"], "sky", ""),
+                             "keyword.control", "variable.language", "constant.language"], "kw", ""),
+            tok("Operators", ["keyword.operator", "punctuation.accessor"], "op", ""),
             tok("Strings", ["string", "string.quoted", "markup.inline.raw", "markup.fenced_code",
-                            "markup.raw"], "green"),
+                            "markup.raw"], "str"),
             tok("Unquoted values", ["string.unquoted", "string.unquoted.plain.out.yaml",
-                                    "string.unquoted.plain.in.yaml"], "mint"),
+                                    "string.unquoted.plain.in.yaml"], "plain"),
             tok("Escapes and regex", ["constant.character.escape", "string.regexp",
-                                      "constant.other.placeholder", "constant.character.entity"], "orange"),
-            tok("Numbers", ["constant.numeric"], "coral"),
+                                      "constant.other.placeholder", "constant.character.entity"], "esc"),
+            tok("Numbers", ["constant.numeric"], "num"),
             tok("Constants", ["constant.other", "variable.other.constant",
-                              "variable.other.enummember", "support.constant"], "orange"),
+                              "variable.other.enummember", "support.constant"], "const"),
             tok("Types", ["entity.name.type", "entity.name.class", "entity.other.inherited-class",
                           "support.type", "support.class", "storage.type.java",
-                          "storage.type.object.array.java", "entity.name.namespace"], "teal", ""),
-            tok("Type parameters", ["storage.type.generic", "entity.name.type.parameter"], "aqua"),
+                          "storage.type.object.array.java", "entity.name.namespace"], "type", ""),
+            tok("Type parameters", ["storage.type.generic", "entity.name.type.parameter"], "tag"),
             tok("Function declarations", ["entity.name.function", "meta.function entity.name.function",
-                                          "support.function"], "yellow"),
+                                          "support.function"], "fn"),
             tok("Variables", ["variable", "variable.parameter", "meta.function-call",
                               "entity.name.function.member.call"], "fg"),
             tok("Fields", ["variable.other.property", "variable.other.member",
-                           "variable.other.object.property", "meta.attribute"], "sky"),
+                           "variable.other.object.property", "meta.attribute"], "field"),
             tok("Annotations", ["storage.type.annotation", "meta.annotation punctuation.definition.annotation",
                                 "meta.decorator", "entity.name.function.decorator",
-                                "punctuation.decorator", "entity.name.label"], "lavender"),
-            tok("Markup tags", ["entity.name.tag", "meta.tag.sgml"], "aqua"),
+                                "punctuation.decorator", "entity.name.label"], "meta"),
+            tok("Markup tags", ["entity.name.tag", "meta.tag.sgml"], "tag"),
             tok("Markup tag punctuation", ["punctuation.definition.tag"], "muted"),
-            tok("Attribute names", ["entity.other.attribute-name"], "sky"),
+            tok("Attribute names", ["entity.other.attribute-name"], "field"),
             tok("Keys", ["entity.name.tag.yaml", "support.type.property-name",
                          "support.type.property-name.json", "keyword.other.definition.ini",
-                         "meta.property-name", "support.type.property-name.toml"], "orange", "bold"),
+                         "meta.property-name", "support.type.property-name.toml"], "key", "bold"),
             tok("Punctuation", ["punctuation.separator", "punctuation.terminator"], "muted"),
-            tok("Headings", ["markup.heading", "entity.name.section"], "blue", "bold"),
-            tok("Bold", ["markup.bold"], "orange", "bold"),
-            tok("Italic", ["markup.italic"], "yellow", "italic"),
+            tok("Headings", ["markup.heading", "entity.name.section"], "kw", "bold"),
+            tok("Bold", ["markup.bold"], "key", "bold"),
+            tok("Italic", ["markup.italic"], "fn", "italic"),
             tok("Quotes", ["markup.quote"], "comment", "italic"),
-            tok("Links", ["markup.underline.link", "string.other.link"], "teal", "underline"),
+            tok("Links", ["markup.underline.link", "string.other.link"], "link", "underline"),
             tok("Lists", ["punctuation.definition.list.begin", "beginning.punctuation.definition.list"],
-                "orange"),
-            tok("Inserted", ["markup.inserted"], "green"),
-            tok("Deleted", ["markup.deleted"], "coral"),
-            tok("Changed", ["markup.changed"], "blue"),
+                "key"),
+            tok("Inserted", ["markup.inserted"], "str"),
+            tok("Deleted", ["markup.deleted"], "num"),
+            tok("Changed", ["markup.changed"], "kw"),
             tok("Invalid", ["invalid"], "error"),
         ],
         "semanticTokenColors": {
-            "class": P["teal"], "interface": {"foreground": P["teal"], "italic": True},
-            "enum": P["teal"], "struct": P["teal"], "type": P["teal"], "typeParameter": P["aqua"],
-            "namespace": P["fg"], "function.declaration": P["yellow"], "method.declaration": P["yellow"],
-            "property": P["sky"], "enumMember": P["orange"], "variable.readonly": P["orange"],
-            "property.readonly": P["orange"], "property.static.readonly": P["orange"],
-            "annotation": P["lavender"], "decorator": P["lavender"], "macro": P["lavender"],
+            "class": P["type"], "interface": {"foreground": P["type"], "italic": True},
+            "enum": P["type"], "struct": P["type"], "type": P["type"], "typeParameter": P["tag"],
+            "namespace": P["fg"], "function.declaration": P["fn"], "method.declaration": P["fn"],
+            "property": P["field"], "enumMember": P["const"], "variable.readonly": P["const"],
+            "property.readonly": P["const"], "property.static.readonly": P["const"],
+            "annotation": P["meta"], "decorator": P["meta"], "macro": P["meta"],
             "parameter": P["fg"], "variable": P["fg"],
         },
     }
@@ -802,56 +839,56 @@ def vscode_theme():
 SAMPLES = {
     "TxResourceRequestInterceptor.java": """\
 [doc]/**
- * Collects inline resources from a POSTed request. [doct]@see[/] [sky]TxResourceValidationSupport[/]
+ * Collects inline resources from a POSTed request. [doct]@see[/] [field]TxResourceValidationSupport[/]
  */[/]
-[lavender]@Interceptor[/]
-[blue]public class[/] [teal]TxResourceRequestInterceptor[/]
+[meta]@Interceptor[/]
+[kw]public class[/] [type]TxResourceRequestInterceptor[/]
 {
-    [blue]private static final[/] [teal]Logger[/] [orange]LOGGER[/] [sky]=[/] [teal]LoggerFactory[/].[em]getLogger[/]([teal]Interceptor[/].[blue]class[/])[muted];[/]
-    [blue]private static final int[/] [orange]HOOK_ORDER[/] [sky]=[/] [coral]-99[/][muted];[/]
-    [blue]private final[/] [teal]FhirContext[/] [sky]fhirContext[/][muted];[/]
+    [kw]private static final[/] [type]Logger[/] [const]LOGGER[/] [op]=[/] [type]LoggerFactory[/].[em]getLogger[/]([type]Interceptor[/].[kw]class[/])[muted];[/]
+    [kw]private static final int[/] [const]HOOK_ORDER[/] [op]=[/] [num]-99[/][muted];[/]
+    [kw]private final[/] [type]FhirContext[/] [field]fhirContext[/][muted];[/]
 
     [comment]// a failing remote service must not turn that into an error[/]
-    [lavender]@Nullable[/]
-    [blue]private static[/] [teal]LookupCodeResult[/] [yellow]lookUp[/]([blue]final[/] [teal]Coding[/] coding)
+    [meta]@Nullable[/]
+    [kw]private static[/] [type]LookupCodeResult[/] [fn]lookUp[/]([kw]final[/] [type]Coding[/] coding)
     {
-        [orange]LOGGER[/].warn([green]"Display of {}#{} not checked[/][orange]\\n[/][green]"[/][muted],[/] coding.getCode())[muted];[/]
-        [blue]return null[/][muted];[/]
+        [const]LOGGER[/].warn([str]"Display of {}#{} not checked[/][esc]\\n[/][str]"[/][muted],[/] coding.getCode())[muted];[/]
+        [kw]return null[/][muted];[/]
     }
 }""",
     "dependabot.yml": """\
 [comment]# Weekly, grouped minor/patch updates[/]
-[key]version[/][sky]:[/] [coral]2[/]
-[key]updates[/][sky]:[/]
-  [sky]-[/] [key]package-ecosystem[/][sky]:[/] [green]"maven"[/]
-    [key]directory[/][sky]:[/] [green]"/"[/]
-    [key]schedule[/][sky]:[/]
-      [key]interval[/][sky]:[/] [mint]weekly[/]
-    [key]open-pull-requests-limit[/][sky]:[/] [coral]1[/]
-    [key]commit-message[/][sky]:[/]
-      [key]prefix[/][sky]:[/] [green]"build"[/]""",
+[key]version[/][op]:[/] [num]2[/]
+[key]updates[/][op]:[/]
+  [op]-[/] [key]package-ecosystem[/][op]:[/] [str]"maven"[/]
+    [key]directory[/][op]:[/] [str]"/"[/]
+    [key]schedule[/][op]:[/]
+      [key]interval[/][op]:[/] [plain]weekly[/]
+    [key]open-pull-requests-limit[/][op]:[/] [num]1[/]
+    [key]commit-message[/][op]:[/]
+      [key]prefix[/][op]:[/] [str]"build"[/]""",
     "DATA-STORE.run.xml": """\
-[muted]<[/][aqua]configuration[/] [sky]name[/][muted]=[/][green]"DATA-STORE"[/] [sky]type[/][muted]=[/][green]"docker-deploy"[/][muted]>[/]
-  [muted]<[/][aqua]option[/] [sky]name[/][muted]=[/][green]"imageTag"[/] [sky]value[/][muted]=[/][green]"postgres:18"[/] [muted]/>[/]
-  [muted]<[/][aqua]option[/] [sky]name[/][muted]=[/][green]"hostPort"[/] [sky]value[/][muted]=[/][green]"5491"[/] [muted]/>[/]
-[muted]</[/][aqua]configuration[/][muted]>[/]""",
+[muted]<[/][tag]configuration[/] [field]name[/][muted]=[/][str]"DATA-STORE"[/] [field]type[/][muted]=[/][str]"docker-deploy"[/][muted]>[/]
+  [muted]<[/][tag]option[/] [field]name[/][muted]=[/][str]"imageTag"[/] [field]value[/][muted]=[/][str]"postgres:18"[/] [muted]/>[/]
+  [muted]<[/][tag]option[/] [field]name[/][muted]=[/][str]"hostPort"[/] [field]value[/][muted]=[/][str]"5491"[/] [muted]/>[/]
+[muted]</[/][tag]configuration[/][muted]>[/]""",
     ".bashrc": """\
 [comment]# some more ls aliases[/]
-[blue]alias[/] [sky]ll[/][sky]=[/][green]'ls -alF'[/]
-[blue]if[/] [ -f [mint]~/.bash_aliases[/] ][muted];[/] [blue]then[/]
-    [blue].[/] [mint]~/.bash_aliases[/]
-[blue]fi[/]
-[blue]export[/] [sky]PATH[/][sky]=[/][green]"[/][sky]$PATH[/][green]:[/][orange]$([/][yellow]go[/] env GOPATH[orange])[/][green]/bin"[/]""",
+[kw]alias[/] [field]ll[/][op]=[/][str]'ls -alF'[/]
+[kw]if[/] [ -f [plain]~/.bash_aliases[/] ][muted];[/] [kw]then[/]
+    [kw].[/] [plain]~/.bash_aliases[/]
+[kw]fi[/]
+[kw]export[/] [field]PATH[/][op]=[/][str]"[/][field]$PATH[/][str]:[/][esc]$([/][fn]go[/] env GOPATH[esc])[/][str]/bin"[/]""",
 }
 
 SWATCHES = [
-    ("blue", "Keywords"), ("green", "Strings"), ("mint", "Plain values"), ("orange", "Keys, constants"),
-    ("coral", "Numbers"), ("teal", "Types, links"), ("aqua", "Tags"), ("yellow", "Functions"),
-    ("sky", "Fields, attributes"), ("lavender", "Annotations"), ("comment", "Comments"), ("doc", "Docs"),
+    ("kw", "Keywords"), ("str", "Strings"), ("plain", "Plain values"), ("key", "Keys"),
+    ("num", "Numbers"), ("type", "Types"), ("tag", "Tags"), ("fn", "Functions"),
+    ("field", "Fields, attributes"), ("meta", "Annotations"), ("comment", "Comments"), ("doc", "Docs"),
 ]
 
 
-def preview_html():
+def preview_html(name):
     def render(text):
         text = escape(text)
         text = re.sub(r"\[/\]", "</span>", text)
@@ -866,7 +903,7 @@ def preview_html():
     css_vars = "".join(f"--{k}:{v};" for k, v in P.items())
     classes = "".join(f".{k}{{color:var(--{k})}}" for k in P)
     return f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Nordsky</title>
+<html lang="en"><head><meta charset="utf-8"><title>{name}</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 :root{{{css_vars}}}
@@ -890,10 +927,10 @@ header{{padding:7px 14px;background:var(--bg0);border-bottom:1px solid var(--bor
 pre{{margin:0;padding:14px 16px;overflow-x:auto;
   font:13px/1.6 "JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace}}
 {classes}
-.comment,.doc{{font-style:italic}}.doct{{color:var(--teal);font-weight:700}}
-.key{{color:var(--orange);font-weight:700}}.em{{font-style:italic}}
+.comment,.doc{{font-style:italic}}.doct{{color:var(--type);font-weight:700}}
+.key{{font-weight:700}}.em{{font-style:italic}}
 </style></head><body>
-<h1>Nordsky</h1><p>Deep-navy theme for JetBrains IDEs and VS Code</p>
+<h1>{name}</h1><p>Deep-navy theme for JetBrains IDEs and VS Code</p>
 <ul>{swatches}</ul><main>{panes}</main>
 </body></html>
 """
@@ -908,7 +945,10 @@ def write(path, text):
 
 
 if __name__ == "__main__":
-    write("jetbrains/src/main/resources/themes/Nordsky.xml", editor_scheme())
-    write("jetbrains/src/main/resources/themes/Nordsky.theme.json", json.dumps(ui_theme(), indent=2) + "\n")
-    write("vscode/themes/nordsky-color-theme.json", json.dumps(vscode_theme(), indent=2) + "\n")
-    write("docs/preview.html", preview_html())
+    for theme, (stem, P) in THEMES.items():
+        slug = theme.lower().replace(" ", "-")
+        write(f"jetbrains/src/main/resources/themes/{stem}.xml", editor_scheme(theme))
+        write(f"jetbrains/src/main/resources/themes/{stem}.theme.json",
+              json.dumps(ui_theme(theme, stem), indent=2) + "\n")
+        write(f"vscode/themes/{slug}-color-theme.json", json.dumps(vscode_theme(theme), indent=2) + "\n")
+        write(f"docs/preview-{slug}.html", preview_html(theme))

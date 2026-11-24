@@ -3,8 +3,9 @@
   <name>Nordsky Theme</name>
   <vendor url="https://github.com/florian-hoehne/nordsky">Nordsky</vendor>
   <description><![CDATA[
-    Deep-navy dark theme with a matching editor colour scheme: blue keywords, green strings,
-    orange keys and constants, teal types and coral numbers. Covers the whole IDE UI and the
+    Two deep-navy dark themes with matching editor colour schemes. <b>Nordsky</b>: blue keywords,
+    green strings, orange keys and constants, teal types and coral numbers. <b>Nordsky Console</b>:
+    the terminal look with red strings, green numbers and grey annotations. Both cover the whole IDE UI and the
     editor for Java, Kotlin, XML, YAML, JSON, shell, Markdown and every language that uses the
     platform's default text attributes.
   ]]></description>
@@ -13,5 +14,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <themeProvider id="dev.nordsky.theme" path="/themes/Nordsky.theme.json"/>
+    <themeProvider id="dev.nordsky.theme.console" path="/themes/NordskyConsole.theme.json"/>
   </extensions>
 </idea-plugin>

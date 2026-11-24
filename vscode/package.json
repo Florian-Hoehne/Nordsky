@@ -1,7 +1,7 @@
 {
   "name": "nordsky-theme",
   "displayName": "Nordsky Theme",
-  "description": "Deep-navy dark theme: blue keywords, green strings, orange keys, teal types.",
+  "description": "Deep-navy dark themes: Nordsky (green strings, orange keys) and Nordsky Console (terminal look).",
   "version": "1.0.0",
   "publisher": "nordsky",
   "repository": {
@@ -20,6 +20,11 @@
         "label": "Nordsky",
         "uiTheme": "vs-dark",
         "path": "./themes/nordsky-color-theme.json"
+      },
+      {
+        "label": "Nordsky Console",
+        "uiTheme": "vs-dark",
+        "path": "./themes/nordsky-console-color-theme.json"
       }
     ]
   },
