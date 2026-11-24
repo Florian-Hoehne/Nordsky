@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Nordsky</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg0:#01142A;--bg1:#011C33;--bg2:#06294A;--bg3:#0B3A66;--sel:#124D85;--border:#0A2E4F;--fg:#DCE7F2;--muted:#7F9BB8;--faint:#3F5F80;--linenum:#2F6FB5;--blue:#4DA3FF;--sky:#9CCBFF;--orange:#F5A742;--green:#7EDC8A;--mint:#B5EBC0;--teal:#4FD6BE;--aqua:#9FE8D5;--yellow:#FFD98A;--coral:#FF7B8A;--lavender:#B3A5F5;--comment:#5E86AE;--doc:#5FA595;--error:#FF5C6C;--warning:#F5A742;--accent:#1668C7;--white:#FFFFFF;--addBg:#0E3A2E;--delBg:#4A1B2A;--modBg:#0F3560;--conflictBg:#4A3414;--searchBg:#5A4410;--usageBg:#103E5C;--writeBg:#3D2A55;}
+*{box-sizing:border-box}
+body{margin:0;padding:28px;background:var(--bg0);color:var(--fg);
+  font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+h1{margin:0 0 4px;font-size:22px;letter-spacing:.02em}
+p{margin:0 0 20px;color:var(--muted)}
+ul{list-style:none;margin:0 0 24px;padding:0;display:grid;gap:8px;
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+li{display:grid;grid-template-columns:28px 1fr;column-gap:10px;align-items:center;
+  padding:8px 10px;background:var(--bg1);border:1px solid var(--border);border-radius:6px}
+li i{grid-row:span 2;width:28px;height:28px;border-radius:5px}
+li b{font-weight:600;font-size:13px}
+li code{color:var(--muted);font-size:12px}
+main{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr))}
+section{background:var(--bg1);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+section:first-child{grid-row:span 3}
+header{padding:7px 14px;background:var(--bg0);border-bottom:1px solid var(--border);
+  box-shadow:inset 0 3px 0 var(--blue);color:var(--white);font-size:13px}
+pre{margin:0;padding:14px 16px;overflow-x:auto;
+  font:13px/1.6 "JetBrains Mono","Fira Code",ui-monospace,Menlo,Consolas,monospace}
+.bg0{color:var(--bg0)}.bg1{color:var(--bg1)}.bg2{color:var(--bg2)}.bg3{color:var(--bg3)}.sel{color:var(--sel)}.border{color:var(--border)}.fg{color:var(--fg)}.muted{color:var(--muted)}.faint{color:var(--faint)}.linenum{color:var(--linenum)}.blue{color:var(--blue)}.sky{color:var(--sky)}.orange{color:var(--orange)}.green{color:var(--green)}.mint{color:var(--mint)}.teal{color:var(--teal)}.aqua{color:var(--aqua)}.yellow{color:var(--yellow)}.coral{color:var(--coral)}.lavender{color:var(--lavender)}.comment{color:var(--comment)}.doc{color:var(--doc)}.error{color:var(--error)}.warning{color:var(--warning)}.accent{color:var(--accent)}.white{color:var(--white)}.addBg{color:var(--addBg)}.delBg{color:var(--delBg)}.modBg{color:var(--modBg)}.conflictBg{color:var(--conflictBg)}.searchBg{color:var(--searchBg)}.usageBg{color:var(--usageBg)}.writeBg{color:var(--writeBg)}
+.comment,.doc{font-style:italic}.doct{color:var(--teal);font-weight:700}
+.key{color:var(--orange);font-weight:700}.em{font-style:italic}
+</style></head><body>
+<h1>Nordsky</h1><p>Deep-navy theme for JetBrains IDEs and VS Code</p>
+<ul><li><i style="background:#4DA3FF"></i><b>Keywords</b><code>#4DA3FF</code></li><li><i style="background:#7EDC8A"></i><b>Strings</b><code>#7EDC8A</code></li><li><i style="background:#B5EBC0"></i><b>Plain values</b><code>#B5EBC0</code></li><li><i style="background:#F5A742"></i><b>Keys, constants</b><code>#F5A742</code></li><li><i style="background:#FF7B8A"></i><b>Numbers</b><code>#FF7B8A</code></li><li><i style="background:#4FD6BE"></i><b>Types, links</b><code>#4FD6BE</code></li><li><i style="background:#9FE8D5"></i><b>Tags</b><code>#9FE8D5</code></li><li><i style="background:#FFD98A"></i><b>Functions</b><code>#FFD98A</code></li><li><i style="background:#9CCBFF"></i><b>Fields, attributes</b><code>#9CCBFF</code></li><li><i style="background:#B3A5F5"></i><b>Annotations</b><code>#B3A5F5</code></li><li><i style="background:#5E86AE"></i><b>Comments</b><code>#5E86AE</code></li><li><i style="background:#5FA595"></i><b>Docs</b><code>#5FA595</code></li></ul><main><section><header>TxResourceRequestInterceptor.java</header><pre><span class="doc">/**
+ * Collects inline resources from a POSTed request. <span class="doct">@see</span> <span class="sky">TxResourceValidationSupport</span>
+ */</span>
+<span class="lavender">@Interceptor</span>
+<span class="blue">public class</span> <span class="teal">TxResourceRequestInterceptor</span>
+{
+    <span class="blue">private static final</span> <span class="teal">Logger</span> <span class="orange">LOGGER</span> <span class="sky">=</span> <span class="teal">LoggerFactory</span>.<span class="em">getLogger</span>(<span class="teal">Interceptor</span>.<span class="blue">class</span>)<span class="muted">;</span>
+    <span class="blue">private static final int</span> <span class="orange">HOOK_ORDER</span> <span class="sky">=</span> <span class="coral">-99</span><span class="muted">;</span>
+    <span class="blue">private final</span> <span class="teal">FhirContext</span> <span class="sky">fhirContext</span><span class="muted">;</span>
+
+    <span class="comment">// a failing remote service must not turn that into an error</span>
+    <span class="lavender">@Nullable</span>
+    <span class="blue">private static</span> <span class="teal">LookupCodeResult</span> <span class="yellow">lookUp</span>(<span class="blue">final</span> <span class="teal">Coding</span> coding)
+    {
+        <span class="orange">LOGGER</span>.warn(<span class="green">"Display of {}#{} not checked</span><span class="orange">\n</span><span class="green">"</span><span class="muted">,</span> coding.getCode())<span class="muted">;</span>
+        <span class="blue">return null</span><span class="muted">;</span>
+    }
+}</pre></section><section><header>dependabot.yml</header><pre><span class="comment"># Weekly, grouped minor/patch updates</span>
+<span class="key">version</span><span class="sky">:</span> <span class="coral">2</span>
+<span class="key">updates</span><span class="sky">:</span>
+  <span class="sky">-</span> <span class="key">package-ecosystem</span><span class="sky">:</span> <span class="green">"maven"</span>
+    <span class="key">directory</span><span class="sky">:</span> <span class="green">"/"</span>
+    <span class="key">schedule</span><span class="sky">:</span>
+      <span class="key">interval</span><span class="sky">:</span> <span class="mint">weekly</span>
+    <span class="key">open-pull-requests-limit</span><span class="sky">:</span> <span class="coral">1</span>
+    <span class="key">commit-message</span><span class="sky">:</span>
+      <span class="key">prefix</span><span class="sky">:</span> <span class="green">"build"</span></pre></section><section><header>DATA-STORE.run.xml</header><pre><span class="muted">&lt;</span><span class="aqua">configuration</span> <span class="sky">name</span><span class="muted">=</span><span class="green">"DATA-STORE"</span> <span class="sky">type</span><span class="muted">=</span><span class="green">"docker-deploy"</span><span class="muted">&gt;</span>
+  <span class="muted">&lt;</span><span class="aqua">option</span> <span class="sky">name</span><span class="muted">=</span><span class="green">"imageTag"</span> <span class="sky">value</span><span class="muted">=</span><span class="green">"postgres:18"</span> <span class="muted">/&gt;</span>
+  <span class="muted">&lt;</span><span class="aqua">option</span> <span class="sky">name</span><span class="muted">=</span><span class="green">"hostPort"</span> <span class="sky">value</span><span class="muted">=</span><span class="green">"5491"</span> <span class="muted">/&gt;</span>
+<span class="muted">&lt;/</span><span class="aqua">configuration</span><span class="muted">&gt;</span></pre></section><section><header>.bashrc</header><pre><span class="comment"># some more ls aliases</span>
+<span class="blue">alias</span> <span class="sky">ll</span><span class="sky">=</span><span class="green">'ls -alF'</span>
+<span class="blue">if</span> [ -f <span class="mint">~/.bash_aliases</span> ]<span class="muted">;</span> <span class="blue">then</span>
+    <span class="blue">.</span> <span class="mint">~/.bash_aliases</span>
+<span class="blue">fi</span>
+<span class="blue">export</span> <span class="sky">PATH</span><span class="sky">=</span><span class="green">"</span><span class="sky">$PATH</span><span class="green">:</span><span class="orange">$(</span><span class="yellow">go</span> env GOPATH<span class="orange">)</span><span class="green">/bin"</span></pre></section></main>
+</body></html>
